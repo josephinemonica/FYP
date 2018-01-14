@@ -1,0 +1,36 @@
+#IK solver
+#@param x_d: desired goal pose [x y z psi theta phi]^T 
+#@param q_1: initial joint postures [xb yb zb psi t1 t2 t3 t4]^T
+#@param T: required time to move from x_1 to x_d
+#return: joint postures q that will generate x_d
+def IK(x_d,q_1,T):
+    N=15
+    q_k=q_1     #initialize q_k
+    x_k=FK(q_1) #initialize x_k
+    dt=T/N  #integration step time
+    
+    #Weighting matrices
+    We=1.0*eye(6)   #main task
+    Wv=0.1*eye(8)   #singularity avoidance
+    
+    for k in range(1,N+1):  #k=1,2,3, ... ,N
+        
+        #calculate planned velocity
+        x_k_dot=(x_d-x_k)/((N+1-k)*dt)
+        
+        #find joint rates that generate x_k_dot
+        #use configuration control method
+        Je=Jacobian(q_k[4],q_k[5],q_k[6],q_k[7],q_k[3])  #compute the jacobian at iteration k. Jacobian(t1,t2,t3,t4,psi)
+        q_k_dot=(Je.transpose()*We*Je+ Wv)**-1 * (Je.transpose()*We*x_k_dot)
+        
+        #Integrate to find the next q_k
+        q_k=q_k+q_k_dot*dt
+        
+        #Compute the new pose
+        x_k=FK(q_k)
+        
+    return q_k  #return the final joint postures i.e. joint postures that will generate x_d
+        
+    
+Matrix([[1.00000000000000, 0, 0, 0, 0, 0, 0, 0], [0, 1.00000000000000, 0, 0.283160000000000, 0, -1.00000000000000, -1.00000000000000, 0], [0, 0, 1.00000000000000, 0, 1.00000000000000, 0, 0, -1.00000000000000], [0, 0, 0, 0, 0, 0.0952500000000000, 0.0952500000000000, 0], [0, 0, 0, 0, 0.170000000000000, 0, 0, 0], [0, 0, 0, 1.00000000000000, 0, 0.170000000000000, 0, 0]])
+
