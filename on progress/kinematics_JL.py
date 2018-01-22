@@ -239,7 +239,7 @@ def FK(q):
 #@param T: required time to move from x_1 to x_d
 #return: joint postures q that will generate x_d
 def IK(x_d,z_d,q_1,Time):
-    N=300
+    N=100
     q_k=q_1     #initialize q_k
     x_k=FK(q_1)[0:3,0:1] #initialize x_k
     z_k=FK(q_1)[3:6,0:1] #initialize z_k
@@ -267,7 +267,7 @@ def IK(x_d,z_d,q_1,Time):
         t1=q_k[4]
         t2=q_k[5]
         t3=q_k[6]
-        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,5),W2:W_i(t2,t2_min,t2_max,tau2,5),W3:W_i(t3,t3_min,t3_max,tau3,5)})
+        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,0),W2:W_i(t2,t2_min,t2_max,tau2,0),W3:W_i(t3,t3_min,t3_max,tau3,0)})
 
         q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
 
@@ -302,8 +302,8 @@ def IK(x_d,z_d,q_1,Time):
     
 #=======================================================================================================        
 begin=time.time()
-q_1=Matrix([[0],[0],[0],[0],[0],[0+pi],[0-pi/2],[0]])   #initial posture
-pose_goal=Matrix([[5],[2],[1],[1],[1.5],[1]])   #pose goal
+q_1=Matrix([[0],[0],[0.95],[0],[0],[-1],[1],[0]])   #initial posture
+pose_goal=Matrix([[1],[1],[0.4],[0],[pi],[0]])   #pose goal
 
 q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    #compute posture with IK
 print('q computed by IK algo is: ',q_computed)

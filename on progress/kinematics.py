@@ -34,6 +34,15 @@ psi_dot_list_actual=[] #actual from the algo
 theta_dot_list_actual=[]
 phi_dot_list_actual=[]
 #================================================================================================================
+
+def R(psi,theta,phi):
+    return Matrix([
+        [cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi) - sin(psi)*cos(phi), sin(phi)*sin(psi) + sin(theta)*cos(phi)*cos(psi)], 
+        [sin(psi)*cos(theta), sin(phi)*sin(psi)*sin(theta) + cos(phi)*cos(psi), -sin(phi)*cos(psi) + sin(psi)*sin(theta)*cos(phi)], 
+        [-sin(theta), sin(phi)*cos(theta), cos(phi)*cos(theta)]])
+
+
+
 #Computing rotation matrix Q of a link frame
 #params: alpha, theta -> DH params
 def Q(alpha,theta): 
@@ -62,22 +71,26 @@ def vect(A):
                     [A[3]-A[1]]])
                     
 #compute ZYX euler angles given a 3x3rotation matrix   
-#https://www.geometrictools.com/Documentation/EulerAngles.pdf          
+#https://www.geometrictools.com/Documentation/EulerAngles.pdf        
+#R[6]=-sin(theta)  
 def euler_angles(R):
     if(R[6]<1):
         if(R[6]>-1):
             theta=asin(-R[6])
             psi=atan2(R[3],R[0])
             phi=atan2(R[7],R[8])
-        else:
+            #print("BO")
+        else: #R[6]=-1 #not a unique solution
             theta=pi/2
-            psi=-atan2(-R[5],R[4])
+            psi=-atan2(-R[5],R[4]) #phi-psi=-atan2(-R[5],R[4])
             phi=0
-    else:
+            #print("BUNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
+    else:#R[6]=1
+        #not a unique solution
         theta=-pi/2
-        psi=atan2(-R[5],R[4])#atan2(R[1][0],R[1][1])
+        psi=atan2(-R[5],R[4]) #psi +phi=atan2(-R[5],R[4])
         phi=0
-
+        #print("BUMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
     return Matrix([[psi],[theta],[phi]])
     
 #T matrix to transfrom rates of zyx euler angles to angular velocity. omega=T d/dt(psi theta phi)
@@ -119,7 +132,7 @@ def Jacobian(t1,t2,t3,t4,psi):
     [cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi) - sin(psi)*cos(phi), sin(phi)*sin(psi) + sin(theta)*cos(phi)*cos(psi)], 
     [sin(psi)*cos(theta), sin(phi)*sin(psi)*sin(theta) + cos(phi)*cos(psi), -sin(phi)*cos(psi) + sin(psi)*sin(theta)*cos(phi)], 
     [-sin(theta), sin(phi)*cos(theta), cos(phi)*cos(theta)]])
-    
+
     #p_eb= position of ee w.r.t base in base's frame
     p_eb=a1_vec+P1*a2_vec+P2*a3_vec+P3*a4_vec+shift
 
@@ -191,7 +204,6 @@ def FK(q):
     p=p_b+Rb*Rs*(shift+a1_vec+P1*a2_vec+P2*a3_vec+P3*a4_vec)
     #orientation
     Q_e=Rb*Rs*P4
-    
     #compute orientation angles
     ori=euler_angles(Q_e)
     
@@ -206,7 +218,7 @@ def FK(q):
 #@param T: required time to move from x_1 to x_d
 #return: joint postures q that will generate x_d
 def IK(x_d,z_d,q_1,Time):
-    N=300
+    N=100
     q_k=q_1     #initialize q_k
     x_k=FK(q_1)[0:3,0:1] #initialize x_k
     z_k=FK(q_1)[3:6,0:1] #initialize z_k
@@ -263,9 +275,18 @@ def IK(x_d,z_d,q_1,Time):
     
 #=======================================================================================================        
 begin=time.time()
-q_1=Matrix([[0],[0],[0],[0],[0],[0],[3.14],[0]])   #initial posture
-pose_goal=Matrix([[5],[2],[1],[1],[1.5],[1]])   #pose goal
+q_1=Matrix([[0],[0],[0],[0],[0],[1],[3.14],[0]])   #initial posture
 
+pose_goal=Matrix([[5],[2],[1],[1],[3],[2]])   #pose goal
+
+#print(R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf())
+#aa=R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf()
+#print(euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5]))) #TODO psi180 phi180=theta180
+pose_goal[3:6,0:1]=euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5])).evalf() #TODO
+
+#print(R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf())
+#bb=R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf()
+#print(aa-bb)
 q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    #compute posture with IK
 print('q computed by IK algo is: ',q_computed)
 

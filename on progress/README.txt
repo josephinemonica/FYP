@@ -1,19 +1,8 @@
-I copied IK.py and edited it in IK_edit.py
-the Jacobian for ee w.r.t base is flipped.
-It was : 
-[e]
-[exr]
-I changed to:
-[exr]
-[e]
-so that J q_dot=    [velocity]
-                    [omega]
-so that it is consistent when being concatenated to build the TOTAL jacobian
-
-TODO
-NOTE: MUST change the Jacobian of the rest of the code
-
+Manipulability only depends on t2 and t3. t1 does not affect, which makes sense
 -----------------------------------------------------------------------------
+3D plot
+https://matplotlib.org/mpl_toolkits/mplot3d/tutorial.html
+
 IDEA:
 We have 2 psi (of base and of EE) careful!!
 for orientation->
@@ -34,6 +23,14 @@ problems with joint limit
 ---
 
 ===
+
+Manipulability
+BOOK robotics_modelling_planning_and_control.pdf -> page 126 on book
+The manipulability measure is given by the product of the singular values of the
+Jacobian
+
+Singular values
+https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.svdvals.html#scipy.linalg.svdvals
 --------------------------------------------------------------------------------
 CURRENT STATE:
 

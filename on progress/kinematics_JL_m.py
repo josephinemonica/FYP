@@ -6,6 +6,7 @@ s=sin
 import numpy as np
 import matplotlib.pyplot as plt
 #================================================================================================================
+#rotation matrix between frame 1 of the arm with frame xyz of the world
 Rs=Matrix([
     [1,0,0],
     [0,-1,0],
@@ -214,6 +215,17 @@ def Jacobian(t1,t2,t3,t4,psi):
     J=F.row_join(G)
 
     return J.evalf()
+    
+def mm(t1,t2,t3):
+    J_eb=Matrix([
+    [-l2*c(t2)*s(t1)-(l3+l4)*s(t2+t3)*s(t1),    -l2*c(t1)*s(t2)+(l3+l4)*c(t1)*c(t2+t3)      ,(l3+l4)*c(t1)*c(t2+t3) ,0],
+    [l2*c(t1)*c(t2)+(l3+l4)*s(t2+t3)*c(t1),     -l2*s(t1)*s(t2)+(l3+l4)*s(t1)*c(t2+t3)      ,(l3+l4)*s(t1)*c(t2+t3) ,0],
+    [0,                                         l2*c(t2)+(l3+l4)*s(t2+t3)                   ,(l3+l4)*s(t2+t3)       ,0],
+    [0,s(t1)    ,s(t1)    ,c(t1)*s(t2+t3)],
+    [0,-c(t1)   ,-c(t1)   ,s(t1)*s(t2+t3)],
+    [1,0        ,0        ,-c(t2+t3)     ]])
+    return sqrt((J_eb*J_eb.transpose()).det())    
+
 #=======================================================================================================
 #FK 
 #@param joint posture [xb yb zb psi t1 t2 t3 t4]^T
@@ -271,7 +283,7 @@ def FK(q):
 #@param T: required time to move from x_1 to x_d
 #return: joint postures q that will generate x_d
 def IK(x_d,z_d,q_1,Time):
-    N=300
+    N=150
     q_k=q_1     #initialize q_k
     x_k=FK(q_1)[0:3,0:1] #initialize x_k
     z_k=FK(q_1)[3:6,0:1] #initialize z_k
@@ -284,7 +296,7 @@ def IK(x_d,z_d,q_1,Time):
     Wc=3.0*eye(3)   #additional task
     C=2
     #manipulability constant: cost function= -manip_const * manipulability
-    manip_const=5000
+    manip_const=0
     for k in range(1,N+1):  #k=1,2,3, ... ,N
 
         #calculate planned velocity
@@ -301,7 +313,7 @@ def IK(x_d,z_d,q_1,Time):
         t1=q_k[4]
         t2=q_k[5]
         t3=q_k[6]
-        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,1000),W2:W_i(t2,t2_min,t2_max,tau2,1000),W3:W_i(t3,t3_min,t3_max,tau3,1000)})
+        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,10),W2:W_i(t2,t2_min,t2_max,tau2,10),W3:W_i(t3,t3_min,t3_max,tau3,10)})
         
         q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot + manip_const/2.0 * dt * grad_m(q_k))
 
@@ -338,7 +350,7 @@ def IK(x_d,z_d,q_1,Time):
 #=======================================================================================================        
 begin=time.time()
 q_1=Matrix([[0],[0],[0],[0],[0],[0+pi],[0-pi/2],[0]])   #initial posture
-pose_goal=Matrix([[5],[2],[1],[1],[1.5],[1]])   #pose goal
+pose_goal=Matrix([[0],[0],[1],[0],[0],[0]])   #pose goal
 
 q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    #compute posture with IK
 print('q computed by IK algo is: ',q_computed)
