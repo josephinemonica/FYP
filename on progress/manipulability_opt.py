@@ -1,3 +1,6 @@
+import pylab as pl
+from scipy import optimize
+
 from sympy import *
 c=cos
 s=sin
@@ -13,7 +16,14 @@ Rs=Matrix([
     [1,0,0],
     [0,-1,0],
     [0,0,-1]])
-    
+
+#Compute rotation matrix for euler angles psi,theta, and phi
+def R(psi,theta,phi):
+    return Matrix([
+        [cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi) - sin(psi)*cos(phi), sin(phi)*sin(psi) + sin(theta)*cos(phi)*cos(psi)], 
+        [sin(psi)*cos(theta), sin(phi)*sin(psi)*sin(theta) + cos(phi)*cos(psi), -sin(phi)*cos(psi) + sin(psi)*sin(theta)*cos(phi)], 
+        [-sin(theta), sin(phi)*cos(theta), cos(phi)*cos(theta)]])
+            
 #Computing rotation matrix Q of a link frame
 #params: alpha, theta -> DH params
 def Q(alpha,theta): 
@@ -31,9 +41,7 @@ def a_vector(a,b,theta):
 def CPM(v):
     return Matrix([[0,      -v[2],  v[1]],
                    [v[2],   0,     -v[0]],
-                   [-v[1],  v[0],   0]
-
-                   ])
+                   [-v[1],  v[0],   0]])
                    
 #Compute the total Jacobian of UAV+arm system
 #NOTE: t4 does not affect the Jacobian for our robot actually
@@ -106,7 +114,6 @@ def m(q):
     
     #Jacobian matrix
     Jac=Jacobian(q[4],q[5],q[6],q[7],q[3])  #compute the jacobian at iteration k. Jacobian(t1,t2,t3,t4,psi)
-    print(Jac*Jac.transpose())
     #manipulability
     manip=(Jac*Jac.transpose()).det()
     
@@ -167,97 +174,45 @@ def vary_t1():
     plt.ylim(float(min(m_t1))-0.1,float(max(m_t1))+0.1)
     plt.plot(t1_list,m_t1)
     plt.show()
+#---------------------------------------------------------------------------------------------------------------------------#
+psi_goal=1
+theta_goal=3
+phi_goal=0
+goal_rotation=R(psi_goal,theta_goal,phi_goal)
+beta=atan2(goal_rotation[8],sqrt(goal_rotation[6]**2+goal_rotation[7]**2))
 
-#=========================
-def vary_t2():
-    t2_list=np.arange(0,2*pi+0.1,0.1)
-    m_t2=[]
-    for t2 in t2_list:
-        q_test=Matrix([[1],[100],[1],[2],[0],[t2],[0-pi/2],[0]]) 
-        man=m(q_test)
-        m_t2.append(man)
-    plt.figure(1)   
-    plt.ylim(float(min(m_t2))-0.1,float(max(m_t2))+0.1)
-    plt.plot(t2_list,m_t2)
-    plt.show()  
-
-#=========================
-def vary_t3():
-    t3_list=np.arange(0,2*pi+0.1,0.1)
-    m_t3=[]
-    for t3 in t3_list:
-        
-        q_test=Matrix([ #man const=0
-[ 0.970961285262131],
-[  1.02132778481411],
-[ 0.694669112087531],
-[ 0.679252605172343],
-[-0.323322198466938],
-[  2.27175208891396],
-[ t3],
-[  1.00257187369481]])#([[1],[100],[1],[2],[0],[1+pi],[t3],[0]]) 
-        man=m(q_test)
-        m_t3.append(man)
-    plt.figure(1)   
-    plt.ylim(float(min(m_t3))-0.1,float(max(m_t3))+0.1)
-    plt.plot(t3_list,m_t3)
-    plt.show()
-#=========================    
-def vary_t2t3():
-    t2_list = np.array([
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),
-    np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100),np.linspace(0, 2 * np.pi, 100)
-    ])
+def f(t):
+    #Jacobian matrix
+    t2=t
+    Jac=Jacobian(0,t2,beta.evalf()+pi/2-t2,0,0)  #compute the jacobian at iteration k. Jacobian(t1,t2,t3,t4,psi)
+    #Jac=Jacobian(0,t2,0,0,0)
+    #manipulability
+    manip=(Jac*Jac.transpose()).det()   
+    return -sqrt(manip) 
     
-    t3_list=np.transpose(t2_list)
+initial_guess = [0.4]
+print('beta: ',beta.evalf())
 
-    j=0   
-    man_list=np.zeros((100,100)) #TODO CHANGE size
-    #t2_list, t3_list = np.meshgrid(t2_list, t3_list)
-    for i in range(len(t2_list)):
-        for k in range(len(t2_list[0])):
-            print(i,k)
-            #print(j)
-            #j=j+1
-            q_test=Matrix([[1],[100],[1],[2],[0],[t2_list[i,k]],[t3_list[i,k]],[0]])
-            man=m(q_test)
-            print(man)
-            man_list[i,k]=man
-        #man#_list[i]=m_child
-    #print(man_list)
-    print(man_list)
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')  
-    ax.plot_surface(t2_list, t3_list, man_list, color='b')
-    plt.show()
-#********************************************************************************************************************************#
-#vary_t2()
-#vary_t3()
-#vary_t2t3()
-t2,t3= symbols('t2 t3')
-q_test=Matrix([ #man const=2
-[ 0],
-[  0],
-[  0],
-[  0],
-[0],
-[  t2],
-[  t3],
-[  0]])
-print(simplify(m(q_test)))
+if(beta<0):
+    b=[(0,3.14159+beta.evalf())]
+else: #beta >=0
+    b=[(beta.evalf(),pi)]
+   
+#b=[(0,pi)]
 
-#begin=time.time()
-#for i in range(10):
-#    q_test=Matrix([[1],[100],[1],[2],[2.2],[0+pi],[0-pi/2],[0]]) 
-#    print(m(q_test))
-#    #print(m_svd(q_test))
-#end=time.time()
-#print(end-begin)
+print('boundary for t2: ',b) 
+result = optimize.minimize(f, initial_guess, method="L-BFGS-B", bounds=b)
+if result.success:
+    fitted_params = result.x
+    print('optimum t2',fitted_params)
+    print('t3: ',beta.evalf()+pi.evalf()/2-result.x)
+    print('resulting to manipulability: ',-f(fitted_params))
+else:
+    raise ValueError(result.message)
+#---------------------------------------------------------------------------------------------------------------------------#
+q_test=Matrix([[1],[100],[1],[2],[0],[1],[2],[0]]) 
+for i in range(10):
+    print(q_test)
+    q_test[5]=q_test[5]+0.1
+    q_test[6]=q_test[6]-0.1
+    print(m(q_test))

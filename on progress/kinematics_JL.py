@@ -34,6 +34,13 @@ psi_dot_list_actual=[] #actual from the algo
 theta_dot_list_actual=[]
 phi_dot_list_actual=[]
 #================================================================================================================
+#Compute rotation matrix for euler angles psi,theta, and phi
+def R(psi,theta,phi):
+    return Matrix([
+        [cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi) - sin(psi)*cos(phi), sin(phi)*sin(psi) + sin(theta)*cos(phi)*cos(psi)], 
+        [sin(psi)*cos(theta), sin(phi)*sin(psi)*sin(theta) + cos(phi)*cos(psi), -sin(phi)*cos(psi) + sin(psi)*sin(theta)*cos(phi)], 
+        [-sin(theta), sin(phi)*cos(theta), cos(phi)*cos(theta)]])
+
 #Computing rotation matrix Q of a link frame
 #params: alpha, theta -> DH params
 def Q(alpha,theta): 
@@ -267,7 +274,7 @@ def IK(x_d,z_d,q_1,Time):
         t1=q_k[4]
         t2=q_k[5]
         t3=q_k[6]
-        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,0),W2:W_i(t2,t2_min,t2_max,tau2,0),W3:W_i(t3,t3_min,t3_max,tau3,0)})
+        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,100),W2:W_i(t2,t2_min,t2_max,tau2,100),W3:W_i(t3,t3_min,t3_max,tau3,100)})
 
         q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
 
@@ -301,9 +308,19 @@ def IK(x_d,z_d,q_1,Time):
     return q_k  #return the final joint postures i.e. joint postures that will generate x_d, z_d
     
 #=======================================================================================================        
+#==========JOINT LIMITS
+#t1_min=-pi/6
+#t1_max=pi/6
+#t2_min=-pi+pi
+#t2_max=0+pi
+#t3_min=0-pi/2
+#t3_max=pi-pi/2
+
 begin=time.time()
-q_1=Matrix([[0],[0],[0.95],[0],[0],[-1],[1],[0]])   #initial posture
+q_1=Matrix([[0],[0],[0],[0],[0],[1.5],[0],[0]])   #initial posture
 pose_goal=Matrix([[1],[1],[0.4],[0],[pi],[0]])   #pose goal
+
+pose_goal[3:6,0:1]=euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5])).evalf() #TODO
 
 q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    #compute posture with IK
 print('q computed by IK algo is: ',q_computed)

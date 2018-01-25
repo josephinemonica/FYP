@@ -35,6 +35,13 @@ psi_dot_list_actual=[] #actual from the algo
 theta_dot_list_actual=[]
 phi_dot_list_actual=[]
 #================================================================================================================
+#Compute rotation matrix for euler angles psi,theta, and phi
+def R(psi,theta,phi):
+    return Matrix([
+        [cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi) - sin(psi)*cos(phi), sin(phi)*sin(psi) + sin(theta)*cos(phi)*cos(psi)], 
+        [sin(psi)*cos(theta), sin(phi)*sin(psi)*sin(theta) + cos(phi)*cos(psi), -sin(phi)*cos(psi) + sin(psi)*sin(theta)*cos(phi)], 
+        [-sin(theta), sin(phi)*cos(theta), cos(phi)*cos(theta)]])
+
 #Computing rotation matrix Q of a link frame
 #params: alpha, theta -> DH params
 def Q(alpha,theta): 
@@ -283,7 +290,7 @@ def FK(q):
 #@param T: required time to move from x_1 to x_d
 #return: joint postures q that will generate x_d
 def IK(x_d,z_d,q_1,Time):
-    N=150
+    N=200
     q_k=q_1     #initialize q_k
     x_k=FK(q_1)[0:3,0:1] #initialize x_k
     z_k=FK(q_1)[3:6,0:1] #initialize z_k
@@ -349,8 +356,10 @@ def IK(x_d,z_d,q_1,Time):
     
 #=======================================================================================================        
 begin=time.time()
-q_1=Matrix([[0],[0],[0],[0],[0],[0+pi],[0-pi/2],[0]])   #initial posture
-pose_goal=Matrix([[0],[0],[1],[0],[0],[0]])   #pose goal
+q_1=Matrix([[0],[0],[0],[0],[0],[1.5],[0],[0]])   #initial posture
+pose_goal=Matrix([[1],[1],[0.4],[1],[3],[0]])   #pose goal
+
+pose_goal[3:6,0:1]=euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5])).evalf() #TODO
 
 q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    #compute posture with IK
 print('q computed by IK algo is: ',q_computed)
@@ -359,6 +368,7 @@ pose_computed=FK(q_computed)
 print('the q computed would result to pose: ',pose_computed)
 
 pose_error=pose_goal-pose_computed  #error ( goal- IK solution)
+
 print('manipulability is: ',m(q_computed))
 print('the error in pose is: ', pose_error)
 end=time.time()

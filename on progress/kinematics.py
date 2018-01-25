@@ -35,13 +35,12 @@ theta_dot_list_actual=[]
 phi_dot_list_actual=[]
 #================================================================================================================
 
+#Compute rotation matrix for euler angles psi,theta, and phi
 def R(psi,theta,phi):
     return Matrix([
         [cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi) - sin(psi)*cos(phi), sin(phi)*sin(psi) + sin(theta)*cos(phi)*cos(psi)], 
         [sin(psi)*cos(theta), sin(phi)*sin(psi)*sin(theta) + cos(phi)*cos(psi), -sin(phi)*cos(psi) + sin(psi)*sin(theta)*cos(phi)], 
         [-sin(theta), sin(phi)*cos(theta), cos(phi)*cos(theta)]])
-
-
 
 #Computing rotation matrix Q of a link frame
 #params: alpha, theta -> DH params
@@ -277,17 +276,20 @@ def IK(x_d,z_d,q_1,Time):
 begin=time.time()
 q_1=Matrix([[0],[0],[0],[0],[0],[1],[3.14],[0]])   #initial posture
 
-pose_goal=Matrix([[5],[2],[1],[1],[3],[2]])   #pose goal
+pose_goal=Matrix([[5],[2],[1],[1],[3.14],[0.5]])   #pose goal
 
-#print(R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf())
-#aa=R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf()
-#print(euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5]))) #TODO psi180 phi180=theta180
+print(R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf())
+aa=R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf()
+#print(euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5]))) 
+
 pose_goal[3:6,0:1]=euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5])).evalf() #TODO
 
-#print(R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf())
-#bb=R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf()
-#print(aa-bb)
-q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    #compute posture with IK
+print(R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf())
+bb=R(pose_goal[3],pose_goal[4],pose_goal[5]).evalf()
+print(aa-bb)
+
+#compute posture with IK
+q_computed=IK(pose_goal[0:3,0:1],pose_goal[3:6,0:1],q_1,100)    
 print('q computed by IK algo is: ',q_computed)
 
 pose_computed=FK(q_computed)

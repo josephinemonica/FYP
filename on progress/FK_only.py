@@ -58,16 +58,17 @@ def vect(A):
 #compute ZYX euler angles given a 3x3rotation matrix   
 #https://www.geometrictools.com/Documentation/EulerAngles.pdf          
 def euler_angles(R):
-    if(R[6]<1):
-        if(R[6]>-1):
+    if(R[6]<1): # -sin theta <1 === sin theta>-1
+        if(R[6]>-1): # -sin theta >-1 === sin theta < 1
+            ###sin theta between -1 and 1
             theta=asin(-R[6])
             psi=atan2(R[3],R[0])
             phi=atan2(R[7],R[8])
-        else:
+        else: ### sin theta = 1
             theta=pi/2
             psi=-atan2(-R[5],R[4])
             phi=0
-    else:
+    else: ###sin theta = -1
         theta=-pi/2
         psi=atan2(-R[5],R[4])#atan2(R[1][0],R[1][1])
         phi=0
@@ -242,7 +243,7 @@ def FK(q):
     p=p_b+Rb*Rs*(shift+a1_vec+P1*a2_vec+P2*a3_vec+P3*a4_vec)
     #orientation
     Q_e=Rb*Rs*P4
-    
+    print (Q_e)
     #compute orientation angles
     ori=euler_angles(Q_e)
     
@@ -250,5 +251,5 @@ def FK(q):
     p_result=p.col_join(ori)
     return p_result.evalf()
 #=======================================================================================================    
-q_1=Matrix([[0],[0],[0],[0],[0],[0],[0],[0]])   #initial posture
+q_1=Matrix([[0],[0],[0],[psi],[t1],[t2],[t3],[t4]])   #initial posture
 print(FK(q_1))

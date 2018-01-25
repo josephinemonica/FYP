@@ -1,11 +1,16 @@
 Manipulability only depends on t2 and t3. t1 does not affect, which makes sense
 -----------------------------------------------------------------------------
+For presentation 2
+http://docs.erlerobotics.com/simulation/vehicles/erle_copter/tutorial_5
+https://answers.ros.org/question/198576/ar_pose-doesnt-recognize-tag-in-tum_simulator-please-help/
+https://www.google.com.sg/search?q=aruco+marker+gazebo&num=50&client=ubuntu&hs=E8J&channel=fs&dcr=0&source=lnms&tbm=isch&sa=X&ved=0ahUKEwjPzfGHpfDYAhWFHJQKHabkBEsQ_AUICigB&biw=1193&bih=612#imgrc=1J0S2rh5Oe5G0M:
+https://github.com/JenniferBuehler/grasp-execution-pkgs/wiki/Grasping-with-Jaco-in-Gazebo
+========================================================================
 3D plot
 https://matplotlib.org/mpl_toolkits/mplot3d/tutorial.html
 
-IDEA:
-We have 2 psi (of base and of EE) careful!!
-for orientation->
+python optimization
+http://www.scipy-lectures.org/advanced/mathematical_optimization/
 
 pyOpt for optimization in python
 I have installed the package!
