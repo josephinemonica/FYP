@@ -110,11 +110,11 @@ def W_i(t_i,t_i_min,t_i_max,tau_i,W_o):
     if t_i<=t_i_min:
         return W_o
     elif t_i<=t_i_min+tau_i:
-        return W_o/2*(1+cos(pi*(t_i-t_i_min)/tau_i))
+        return W_o/2.0*(1+cos(pi*(t_i-t_i_min)/tau_i))
     elif t_i<t_i_max-tau_i:
         return 0
     elif t_i<t_i_max:
-        return W_o/2*(1+cos(pi*(t_i_max-t_i)/tau_i))
+        return W_o/2.0*(1+cos(pi*(t_i_max-t_i)/tau_i))
     else:
         return W_o
 W1,W2,W3=symbols('W1 W2 W3')

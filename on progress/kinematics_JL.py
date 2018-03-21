@@ -33,6 +33,13 @@ phi_dot_list_d=[] #desired
 psi_dot_list_actual=[] #actual from the algo
 theta_dot_list_actual=[]
 phi_dot_list_actual=[]
+x_b_list=[]
+y_b_list=[]
+z_b_list=[]
+psi_b_list=[]
+x_list=[]
+y_list=[]
+z_list=[]
 #================================================================================================================
 #Compute rotation matrix for euler angles psi,theta, and phi
 def R(psi,theta,phi):
@@ -109,11 +116,11 @@ def W_i(t_i,t_i_min,t_i_max,tau_i,W_o):
     if t_i<=t_i_min:
         return W_o
     elif t_i<=t_i_min+tau_i:
-        return W_o/2*(1+cos(pi*(t_i-t_i_min)/tau_i))
+        return W_o/2.0*(1+cos(pi*(t_i-t_i_min)/tau_i))
     elif t_i<t_i_max-tau_i:
         return 0
     elif t_i<t_i_max:
-        return W_o/2*(1+cos(pi*(t_i_max-t_i)/tau_i))
+        return W_o/2.0*(1+cos(pi*(t_i_max-t_i)/tau_i))
     else:
         return W_o
 W1,W2,W3=symbols('W1 W2 W3')
@@ -246,7 +253,7 @@ def FK(q):
 #@param T: required time to move from x_1 to x_d
 #return: joint postures q that will generate x_d
 def IK(x_d,z_d,q_1,Time):
-    N=100
+    N=300
     q_k=q_1     #initialize q_k
     x_k=FK(q_1)[0:3,0:1] #initialize x_k
     z_k=FK(q_1)[3:6,0:1] #initialize z_k
@@ -292,9 +299,18 @@ def IK(x_d,z_d,q_1,Time):
         t3_list.append(q_k[6])
         t4_list.append(q_k[7])
         
+        x_b_list.append(q_k[0])
+        y_b_list.append(q_k[1])
+        z_b_list.append(q_k[2])
+        psi_b_list.append(q_k[3])
+        
         psi_list.append(z_k[0])
         theta_list.append(z_k[1])
         phi_list.append(z_k[2])
+        
+        x_list.append(x_k[0])
+        y_list.append(x_k[1])
+        z_list.append(x_k[2])
         
         psi_dot_list_d.append(z_k_dot[0])
         theta_dot_list_d.append(z_k_dot[1])
@@ -318,7 +334,7 @@ def IK(x_d,z_d,q_1,Time):
 
 begin=time.time()
 q_1=Matrix([[0],[0],[0],[0],[0],[1.5],[0],[0]])   #initial posture
-pose_goal=Matrix([[1],[1],[0.4],[0],[pi],[0]])   #pose goal
+pose_goal=Matrix([[1],[1],[0.4],[1],[2],[3]])   #pose goal
 
 pose_goal[3:6,0:1]=euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5])).evalf() #TODO
 
@@ -339,6 +355,7 @@ plt.figure(1)
 #psi---------------------------------------------------------------------
 plt.subplot(311)
 plt.ylabel('psi')
+plt.xlabel('iteration')
 
 plt.plot(psi_list)
 
@@ -350,6 +367,7 @@ plt.plot(x_plot,psi_goal_list,'y--')
 #theta---------------------------------------------------------------------
 plt.subplot(312)
 plt.ylabel('theta')
+plt.xlabel('iteration')
 
 plt.plot(theta_list)
 
@@ -361,6 +379,7 @@ plt.plot(x_plot,theta_goal_list,'y--')
 #phi---------------------------------------------------------------------
 plt.subplot(313)
 plt.ylabel('phi')
+plt.xlabel('iteration')
 
 plt.plot(phi_list)
 
@@ -371,6 +390,7 @@ plt.plot(x_plot,phi_goal_list,'y--')
 
 plt.show() 
 
+#==========================================================================
 #==========================================================================
 plt.figure(2)
 #psi dot---------------------------------------------------------------------
@@ -407,6 +427,7 @@ plt.figure(3)
 #theta 1---------------------------------------------------------------------
 plt.subplot(411)
 plt.ylabel('joint angle #1')
+plt.xlabel('iteration')
 plt.ylim(float(t1_min)-0.1,float(t1_max)+0.1)
 plt.plot(t1_list)
 
@@ -432,6 +453,7 @@ plt.plot(x_plot,t1_relax_up_list,'y--')
 plt.subplot(412)
 plt.ylabel('joint angle #2')
 plt.ylim(float(t2_min)-0.1,float(t2_max)+0.1)
+plt.xlabel('iteration')
 plt.plot(t2_list)
 
 #theta 2 limit
@@ -455,6 +477,7 @@ plt.plot(x_plot,t2_relax_up_list,'y--')
 #theta 3---------------------------------------------------------------------
 plt.subplot(413)
 plt.ylabel('joint angle #3')
+plt.xlabel('iteration')
 plt.ylim(float(t3_min)-0.1,float(t3_max)+0.1)
 plt.plot(t3_list)
 
@@ -479,6 +502,85 @@ plt.plot(x_plot,t3_relax_up_list,'y--')
 #theta 4---------------------------------------------------------------------
 plt.subplot(414)
 plt.ylabel('joint angle #4')
+plt.xlabel('iteration')
 plt.ylim(-3.15,3.15)
 plt.plot(t4_list)
+plt.show() 
+#==========================================================================
+#==========================================================================
+plt.figure(4)
+x_plot=np.arange(0, 300, 1)
+
+#x---------------------------------------------------------------------
+plt.subplot(311)
+plt.ylabel('x')
+plt.xlabel('iteration')
+
+plt.plot(x_list)
+
+x_goal_list=[]
+for i in range(300):
+    x_goal_list.append(pose_goal[0])
+plt.plot(x_plot,x_goal_list,'y--')
+
+#y---------------------------------------------------------------------
+plt.subplot(312)
+plt.ylabel('y')
+plt.xlabel('iteration')
+
+plt.plot(y_list)
+
+y_goal_list=[]
+for i in range(300):
+    y_goal_list.append(pose_goal[1])
+plt.plot(x_plot,y_goal_list,'y--')
+
+#z---------------------------------------------------------------------
+plt.subplot(313)
+plt.ylabel('z')
+plt.xlabel('iteration')
+
+plt.plot(z_list)
+
+z_goal_list=[]
+for i in range(300):
+    z_goal_list.append(pose_goal[2])
+plt.plot(x_plot,z_goal_list,'y--')
+
+plt.show() 
+#==========================================================================
+#==========================================================================
+plt.figure(5)
+x_plot=np.arange(0, 300, 1)
+
+#x_b---------------------------------------------------------------------
+plt.subplot(411)
+plt.ylabel('x base')
+plt.xlabel('iteration')
+
+plt.plot(x_b_list)
+
+
+#y_b---------------------------------------------------------------------
+plt.subplot(412)
+plt.ylabel('y base')
+plt.xlabel('iteration')
+
+plt.plot(y_b_list)
+
+
+#z_b---------------------------------------------------------------------
+plt.subplot(413)
+plt.ylabel('z base')
+plt.xlabel('iteration')
+
+plt.plot(z_b_list)
+
+#psi_b---------------------------------------------------------------------
+plt.subplot(414)
+plt.ylabel('psi base')
+plt.xlabel('iteration')
+
+plt.plot(psi_b_list)
+
 plt.show() 

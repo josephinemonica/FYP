@@ -1,0 +1,56 @@
+*) Launch the simulation (UAV+arm and camera)
+roslaunch ik_controllers launch_ik.launch
+
+*) Tick take_off to take off
+*) Tick vel_ctrl, so we can control the position of UAV using the sliding bar.
+
+*) For aruco marker detection
+roslaunch cam aruco_marker_finder.launch
+
+*) To check for the pose of marker detected
+rostopic echo /aruco_single/pose
+
+*) To see the camera view
+rosrun image_view image_view image:=/robot/camera1/image_raw
+
+*) Insert the aruco marker tag model in gazebo simulation
+
+/gazebo/link_states
+name: ['ground_plane::link', 'asphalt_plane::link', '3DR_Y6_arm::base_link', '3DR_Y6_arm::imu_link', '3DR_Y6_arm::rotor_0', '3DR_Y6_arm::rotor_1', '3DR_Y6_arm::rotor_2', '3DR_Y6_arm::rotor_3', '3DR_Y6_arm::rotor_4', '3DR_Y6_arm::rotor_5', '3DR_Y6_arm::camera_link', '3DR_Y6_arm::camera_link_optical', '3DR_Y6_arm::armLink1', '3DR_Y6_arm::armLink2', '3DR_Y6_arm::armLink3', '3DR_Y6_arm::armLink4', '3DR_Y6_arm::armLink5', 'aruco_visual_marker_1::marker', 'aruco_visual_marker_1::marker_pad']
+
+[10] camera_link
+[11] camera_link_optical
+[17] aruco_visual_marker_1::marker
+[18] aruco_visual_marker_1::marker_pad
+
+
+rostopic echo /gazebo/link_states/pose[10]
+rostopic echo /gazebo/link_states/pose[11]
+rostopic echo /gazebo/link_states/pose[17]
+rostopic echo /gazebo/link_states/pose[18]
+
+camera_link & camera_link_optical -> different x & y, z the same
+                                    orientation different
+orientation: 
+  x: -0.00107252256683
+  y: -0.000277061024933
+  z: 0.000122147086536
+  w: 0.999999379006
+
+orientation: 
+  x: 0.000734630808706
+  y: 0.708043552818
+  z: 0.000506219327182
+  w: 0.706168203314
+
+Vs
+
+    
+marker & marker_pad -> pose and orientation the same
+
+*) Visualize the result
+rosrun image_view image_view image:=/aruco_single/result
+====================================================================================================
+name: ['ground_plane::link', 'rrbot::link1']
+
+

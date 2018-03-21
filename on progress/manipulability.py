@@ -111,8 +111,8 @@ def m(q):
     manip=(Jac*Jac.transpose()).det()
     
     #TODO uncomment me
-    #if abs(manip)<5* 10**-15:   #for very small number there can be error that results the umber to be negative because limit of number accuracy when calculating
-        #return 0
+    if abs(manip)<5* 10**-15:   #for very small number there can be error that results the umber to be negative because limit of number accuracy when calculating
+        return 0
         
     return sqrt(manip)
     
@@ -237,22 +237,16 @@ def vary_t2t3():
     fig = plt.figure()
     ax = fig.gca(projection='3d')  
     ax.plot_surface(t2_list, t3_list, man_list, color='b')
+    ax.set_xlabel('t2')
+    ax.set_ylabel('t3')
+    ax.set_zlabel('manipulability')
     plt.show()
 #********************************************************************************************************************************#
 #vary_t2()
 #vary_t3()
 #vary_t2t3()
-t2,t3= symbols('t2 t3')
-q_test=Matrix([ #man const=2
-[ 0],
-[  0],
-[  0],
-[  0],
-[0],
-[  t2],
-[  t3],
-[  0]])
-print(simplify(m(q_test)))
+vary_t2t3()
+
 
 #begin=time.time()
 #for i in range(10):

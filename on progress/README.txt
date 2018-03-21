@@ -1,5 +1,10 @@
+IMPORTANT!!!!
+in W_i function
+W_o/2---> W_o/2.0 otherwise if we put W_o e.g. 3 (integer), it will be division by integer, therefore resulting to unintended result
+
 Manipulability only depends on t2 and t3. t1 does not affect, which makes sense
 -----------------------------------------------------------------------------
+
 For presentation 2
 http://docs.erlerobotics.com/simulation/vehicles/erle_copter/tutorial_5
 https://answers.ros.org/question/198576/ar_pose-doesnt-recognize-tag-in-tum_simulator-please-help/
