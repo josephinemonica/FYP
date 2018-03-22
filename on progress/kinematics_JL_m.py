@@ -290,7 +290,7 @@ def FK(q):
 #@param T: required time to move from x_1 to x_d
 #return: joint postures q that will generate x_d
 def IK(x_d,z_d,q_1,Time):
-    N=200
+    N=300
     q_k=q_1     #initialize q_k
     x_k=FK(q_1)[0:3,0:1] #initialize x_k
     z_k=FK(q_1)[3:6,0:1] #initialize z_k
@@ -303,7 +303,7 @@ def IK(x_d,z_d,q_1,Time):
     Wc=3.0*eye(3)   #additional task
     C=2
     #manipulability constant: cost function= -manip_const * manipulability
-    manip_const=0
+    manip_const=25
     for k in range(1,N+1):  #k=1,2,3, ... ,N
 
         #calculate planned velocity
@@ -320,7 +320,7 @@ def IK(x_d,z_d,q_1,Time):
         t1=q_k[4]
         t2=q_k[5]
         t3=q_k[6]
-        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,10),W2:W_i(t2,t2_min,t2_max,tau2,10),W3:W_i(t3,t3_min,t3_max,tau3,10)})
+        W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,100),W2:W_i(t2,t2_min,t2_max,tau2,100),W3:W_i(t3,t3_min,t3_max,tau3,100)})
         
         q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot + manip_const/2.0 * dt * grad_m(q_k))
 
@@ -357,7 +357,7 @@ def IK(x_d,z_d,q_1,Time):
 #=======================================================================================================        
 begin=time.time()
 q_1=Matrix([[0],[0],[0],[0],[0],[1.5],[0],[0]])   #initial posture
-pose_goal=Matrix([[1],[1],[0.4],[1],[3],[0]])   #pose goal
+pose_goal=Matrix([[1],[1],[0.4],[1],[2],[3]])   #pose goal
 
 pose_goal[3:6,0:1]=euler_angles(R(pose_goal[3],pose_goal[4],pose_goal[5])).evalf() #TODO
 
