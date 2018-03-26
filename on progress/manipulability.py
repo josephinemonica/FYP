@@ -178,6 +178,8 @@ def vary_t2():
         m_t2.append(man)
     plt.figure(1)   
     plt.ylim(float(min(m_t2))-0.1,float(max(m_t2))+0.1)
+    plt.ylabel('manipulability')
+    plt.xlabel('joint angle #2')
     plt.plot(t2_list,m_t2)
     plt.show()  
 
@@ -194,6 +196,8 @@ def vary_t3():
         m_t3.append(man)
     plt.figure(1)   
     plt.ylim(float(min(m_t3))-0.1,float(max(m_t3))+0.1)
+    plt.ylabel('manipulability')
+    plt.xlabel('joint angle #3')
     plt.plot(t3_list,m_t3)
     plt.show()
 #=========================    
@@ -231,15 +235,15 @@ def vary_t2t3():
     fig = plt.figure()
     ax = fig.gca(projection='3d')  
     ax.plot_surface(t2_list, t3_list, man_list, color='b')
-    ax.set_xlabel('t2')
-    ax.set_ylabel('t3')
+    ax.set_xlabel('joint angle #2')
+    ax.set_ylabel('joint angle #3')
     ax.set_zlabel('manipulability')
     plt.show()
 #********************************************************************************************************************************#
 #vary_t2()
-vary_t3()
+#vary_t3()
 #vary_t2t3()
-#vary_t2t3()
+vary_t2t3()
 
 
 #begin=time.time()
