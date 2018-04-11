@@ -1,5 +1,6 @@
 import time
 from sympy import *
+
 c=cos
 s=sin
 
@@ -350,43 +351,46 @@ end=time.time()
 print(end-begin)
 #====================================================================Plotting
 x_plot=np.arange(0, 300, 1)
-plt.figure(1)
+fig=plt.figure(1)
 
 #psi---------------------------------------------------------------------
-plt.subplot(311)
-plt.ylabel('psi')
-plt.xlabel('iteration')
+ax1=fig.add_subplot(311)
+ax1.set_ylabel(r'$\psi \, (rad)$')
+#plt.xlabel('iteration')
+ax1.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(psi_list)
+ax1.plot(psi_list)
 
 psi_goal_list=[]
 for i in range(300):
     psi_goal_list.append(pose_goal[3])
-plt.plot(x_plot,psi_goal_list,'y--')
+ax1.plot(x_plot,psi_goal_list,'y--')
 
 #theta---------------------------------------------------------------------
-plt.subplot(312)
-plt.ylabel('theta')
-plt.xlabel('iteration')
+ax2=fig.add_subplot(312)
+ax2.set_ylabel(r'$\theta \, (rad)$')
+#plt.xlabel('iteration')
+ax2.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(theta_list)
+ax2.plot(theta_list)
 
 theta_goal_list=[]
 for i in range(300):
     theta_goal_list.append(pose_goal[4])
-plt.plot(x_plot,theta_goal_list,'y--')
+ax2.plot(x_plot,theta_goal_list,'y--')
 
 #phi---------------------------------------------------------------------
-plt.subplot(313)
-plt.ylabel('phi')
-plt.xlabel('iteration')
+ax3=fig.add_subplot(313)
+ax3.set_ylabel(r'$\phi \, (rad)$')
+ax3.set_xlabel('iteration')
+ax3.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(phi_list)
+ax3.plot(phi_list)
 
 phi_goal_list=[]
 for i in range(300):
     phi_goal_list.append(pose_goal[5])
-plt.plot(x_plot,phi_goal_list,'y--')
+ax3.plot(x_plot,phi_goal_list,'y--')
 
 plt.show() 
 
@@ -395,7 +399,7 @@ plt.show()
 plt.figure(2)
 #psi dot---------------------------------------------------------------------
 plt.subplot(311)
-plt.ylabel('psi_dot')
+plt.ylabel(r'$\dot{\psi} $')
 
 plt.plot(psi_dot_list_actual)
 
@@ -403,7 +407,7 @@ plt.plot(psi_dot_list_d,'y--')
 
 #theta dot---------------------------------------------------------------------
 plt.subplot(312)
-plt.ylabel('theta_dot')
+plt.ylabel(r'$\dot{\theta}$')
 
 plt.plot(theta_dot_list_actual)
 
@@ -412,7 +416,7 @@ plt.plot(theta_dot_list_d,'y--')
 
 #phi dot---------------------------------------------------------------------
 plt.subplot(313)
-plt.ylabel('phi')
+plt.ylabel(r'$\dot{\phi}$')
 
 plt.plot(phi_dot_list_actual)
 
@@ -422,14 +426,15 @@ plt.show()
 #==========================================================================
 #==========================================================================
 x_plot=np.arange(0, 300, 1)
-plt.figure(3)
+fig=plt.figure(3)
 
 #theta 1---------------------------------------------------------------------
-plt.subplot(411)
-plt.ylabel('joint angle #1')
-plt.xlabel('iteration')
-plt.ylim(float(t1_min)-0.1,float(t1_max)+0.1)
-plt.plot(t1_list)
+ax1=fig.add_subplot(411)
+ax1.set_ylabel(r'$\theta_1 \, (rad)$')
+ax1.get_yaxis().set_label_coords(-0.1,0.5)
+#ax1.set_xlabel('iteration')
+ax1.set_ylim(float(t1_min)-0.1,float(t1_max)+0.1)
+ax1.plot(t1_list)
 
 #theta 1 limit
 t1_min_list=[]
@@ -444,17 +449,18 @@ for i in range(300):
     t1_relax_low_list.append(t1_min+tau1)
 for i in range(300):
     t1_relax_up_list.append(t1_max-tau1)
-plt.plot(x_plot,t1_min_list,'r--')
-plt.plot(x_plot,t1_max_list,'r--')
-plt.plot(x_plot,t1_relax_low_list,'y--')
-plt.plot(x_plot,t1_relax_up_list,'y--')
+ax1.plot(x_plot,t1_min_list,'r--')
+ax1.plot(x_plot,t1_max_list,'r--')
+ax1.plot(x_plot,t1_relax_low_list,'y--')
+ax1.plot(x_plot,t1_relax_up_list,'y--')
 
 #theta 2---------------------------------------------------------------------
-plt.subplot(412)
-plt.ylabel('joint angle #2')
-plt.ylim(float(t2_min)-0.1,float(t2_max)+0.1)
-plt.xlabel('iteration')
-plt.plot(t2_list)
+ax2=fig.add_subplot(412)
+ax2.set_ylabel(r'$\theta_2 \, (rad)$')
+ax2.get_yaxis().set_label_coords(-0.1,0.5)
+ax2.set_ylim(float(t2_min)-0.1,float(t2_max)+0.1)
+#ax2.set_xlabel('iteration')
+ax2.plot(t2_list)
 
 #theta 2 limit
 t2_min_list=[]
@@ -469,17 +475,18 @@ for i in range(300):
     t2_relax_low_list.append(t2_min+tau2)
 for i in range(300):
     t2_relax_up_list.append(t2_max-tau2)
-plt.plot(x_plot,t2_min_list,'r--')
-plt.plot(x_plot,t2_max_list,'r--')
-plt.plot(x_plot,t2_relax_low_list,'y--')
-plt.plot(x_plot,t2_relax_up_list,'y--')
+ax2.plot(x_plot,t2_min_list,'r--')
+ax2.plot(x_plot,t2_max_list,'r--')
+ax2.plot(x_plot,t2_relax_low_list,'y--')
+ax2.plot(x_plot,t2_relax_up_list,'y--')
 
 #theta 3---------------------------------------------------------------------
-plt.subplot(413)
-plt.ylabel('joint angle #3')
-plt.xlabel('iteration')
-plt.ylim(float(t3_min)-0.1,float(t3_max)+0.1)
-plt.plot(t3_list)
+ax3=fig.add_subplot(413)
+ax3.set_ylabel(r'$\theta_3 \, (rad)$')
+ax3.get_yaxis().set_label_coords(-0.1,0.5)
+#ax3.set_xlabel('iteration')
+ax3.set_ylim(float(t3_min)-0.1,float(t3_max)+0.1)
+ax3.plot(t3_list)
 
 #theta 3 limit
 t3_min_list=[]
@@ -494,93 +501,101 @@ for i in range(300):
     t3_relax_low_list.append(t3_min+tau3)
 for i in range(300):
     t3_relax_up_list.append(t3_max-tau3)
-plt.plot(x_plot,t3_min_list,'r--')
-plt.plot(x_plot,t3_max_list,'r--')
-plt.plot(x_plot,t3_relax_low_list,'y--')
-plt.plot(x_plot,t3_relax_up_list,'y--')
+ax3.plot(x_plot,t3_min_list,'r--')
+ax3.plot(x_plot,t3_max_list,'r--')
+ax3.plot(x_plot,t3_relax_low_list,'y--')
+ax3.plot(x_plot,t3_relax_up_list,'y--')
 
 #theta 4---------------------------------------------------------------------
-plt.subplot(414)
-plt.ylabel('joint angle #4')
-plt.xlabel('iteration')
-plt.ylim(-3.15,3.15)
-plt.plot(t4_list)
+ax4=fig.add_subplot(414)
+ax4.set_ylabel(r'$\theta_4 \, (rad)$')
+ax4.get_yaxis().set_label_coords(-0.1,0.5)
+ax4.set_xlabel('iteration')
+ax4.set_ylim(-3.15,3.15)
+ax4.plot(t4_list)
 plt.show() 
 #==========================================================================
 #==========================================================================
-plt.figure(4)
+fig=plt.figure(4)
 x_plot=np.arange(0, 300, 1)
 
 #x---------------------------------------------------------------------
-plt.subplot(311)
-plt.ylabel('x')
-plt.xlabel('iteration')
+ax1=fig.add_subplot(311)
+ax1.set_ylabel(r'$x \, (m)$')
+#ax1.set_xlabel('iteration')
+ax1.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(x_list)
+ax1.plot(x_list)
 
 x_goal_list=[]
 for i in range(300):
     x_goal_list.append(pose_goal[0])
-plt.plot(x_plot,x_goal_list,'y--')
+ax1.plot(x_plot,x_goal_list,'y--')
 
 #y---------------------------------------------------------------------
-plt.subplot(312)
-plt.ylabel('y')
-plt.xlabel('iteration')
+ax2=fig.add_subplot(312)
+ax2.set_ylabel(r'$y \, (m)$')
+#ax2.set_xlabel('iteration')
+ax2.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(y_list)
+ax2.plot(y_list)
 
 y_goal_list=[]
 for i in range(300):
     y_goal_list.append(pose_goal[1])
-plt.plot(x_plot,y_goal_list,'y--')
+ax2.plot(x_plot,y_goal_list,'y--')
 
 #z---------------------------------------------------------------------
-plt.subplot(313)
-plt.ylabel('z')
-plt.xlabel('iteration')
+ax3=fig.add_subplot(313)
+ax3.set_ylabel(r'$z \, (m)$')
+ax3.set_xlabel('iteration')
+ax3.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(z_list)
+ax3.plot(z_list)
 
 z_goal_list=[]
 for i in range(300):
     z_goal_list.append(pose_goal[2])
-plt.plot(x_plot,z_goal_list,'y--')
+ax3.plot(x_plot,z_goal_list,'y--')
 
 plt.show() 
 #==========================================================================
 #==========================================================================
-plt.figure(5)
+fig=plt.figure(5)
 x_plot=np.arange(0, 300, 1)
 
 #x_b---------------------------------------------------------------------
-plt.subplot(411)
-plt.ylabel('x base')
-plt.xlabel('iteration')
+ax1=fig.add_subplot(411)
+ax1.set_ylabel(r'$x_u \, (m)$') #u for uav
+#ax1.xlabel('iteration')
+ax1.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(x_b_list)
+ax1.plot(x_b_list)
 
 
 #y_b---------------------------------------------------------------------
-plt.subplot(412)
-plt.ylabel('y base')
-plt.xlabel('iteration')
+ax2=fig.add_subplot(412)
+ax2.set_ylabel(r'$y_u \, (m)$')
+#ax2.xlabel('iteration')
+ax2.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(y_b_list)
+ax2.plot(y_b_list)
 
 
 #z_b---------------------------------------------------------------------
-plt.subplot(413)
-plt.ylabel('z base')
-plt.xlabel('iteration')
+ax3=fig.add_subplot(413)
+ax3.set_ylabel(r'$z_u \, (m)$')
+#ax3.set_xlabel('iteration')
+ax3.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(z_b_list)
+ax3.plot(z_b_list)
 
 #psi_b---------------------------------------------------------------------
-plt.subplot(414)
-plt.ylabel('psi base')
-plt.xlabel('iteration')
+ax4=fig.add_subplot(414)
+ax4.set_ylabel(r'$\psi_u \, (rad)$')
+ax4.set_xlabel('iteration')
+ax4.get_yaxis().set_label_coords(-0.1,0.5)
 
-plt.plot(psi_b_list)
+ax4.plot(psi_b_list)
 
 plt.show() 
