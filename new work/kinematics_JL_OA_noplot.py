@@ -286,8 +286,6 @@ def IK(x_d,z_d,q_1,Time):
         t3=q_k[6]
         W_JL_calculated=W_JL.evalf(subs={W1:W_i(t1,t1_min,t1_max,tau1,100),W2:W_i(t2,t2_min,t2_max,tau2,100),W3:W_i(t3,t3_min,t3_max,tau3,100)})
 
-        #without OA
-        #q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
         
         #================================================OBSTACLE AVOIDANCE======================================================
         #obstacle info
@@ -307,10 +305,10 @@ def IK(x_d,z_d,q_1,Time):
             W_oa=1000 #weight for obstacle avoidance task
             
         #with OA
-        #q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ J_oa.transpose()*W_oa*J_oa+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
+        q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ J_oa.transpose()*W_oa*J_oa+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
         
         #without OA
-        q_k_dot=( Je.transpose()*We*Je + Jc.transpose()*Wc*Jc + Wv + W_JL_calculated )**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
+        #q_k_dot=( Je.transpose()*We*Je + Jc.transpose()*Wc*Jc + Wv + W_JL_calculated )**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
         #=========================================================================================================================
         
         #Integrate to find the next q_k
