@@ -267,7 +267,7 @@ def IK(x_d,z_d,q_1,Time):
     dt=Time*1.0/N  #integration step time #multiply 1.0 to avoid integer division error
     
     #Weighting matrices
-    We=3.0*eye(3)   #main task
+    We=1000*eye(3)   #main task
     Wv=0.1*eye(8)   #singularity avoidance
     Wc=3.0*eye(3)   #additional task
     C=2
@@ -310,7 +310,7 @@ def IK(x_d,z_d,q_1,Time):
         ########################
         
         #obstacle info
-        x_obs=0.3
+        x_obs=0.06
         y_obs=0
         z_obs=1.5
         p_obs=Matrix([[x_obs],[y_obs],[z_obs]])
