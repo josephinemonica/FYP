@@ -43,6 +43,9 @@ z_list=[]
 
 #obstacle avoidance
 d_list=[]
+d_1_list=[]
+d_2_list=[]
+d_3_list=[]
 #================================================================================================================
 #Compute rotation matrix for euler angles psi,theta, and phi
 def R(psi,theta,phi):
@@ -431,6 +434,10 @@ def IK(x_d,z_d,q_1,Time):
         W_oa[1,1]=W_oa_2
         W_oa[2,2]=W_oa_3
         
+        d_1_list.append(d_1)
+        d_2_list.append(d_2)
+        d_3_list.append(d_3)
+        
         if(W_oa_1!=0):
             print("A")
         if(W_oa_2!=0):
@@ -511,6 +518,6 @@ print('the q computed would result to pose: ',pose_computed)
 
 pose_error=pose_goal-pose_computed  #error ( goal- IK solution)
 print('the error in pose is: ', pose_error)
-print(x_list)
-print(y_list)
-print(z_list)
+print(d_1_list)
+print(d_2_list)
+print(d_3_list)
