@@ -319,7 +319,7 @@ def IK(x_d,z_d,q_1,Time):
         #arm links are represented with 3 cylinders
         R_1=0.1
         R_2=0.1
-        R_3=0.1
+        R_3=0.01
         
         p_1=p_b+Rb*Rs*(shift)
         p_2=p_b+Rb*Rs*(shift+a1_vec)
@@ -449,10 +449,10 @@ def IK(x_d,z_d,q_1,Time):
         
         
         #with OA
-        q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ J_oa.transpose()*W_oa*J_oa+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
+        #q_k_dot=(Je.transpose()*We*Je + Jc.transpose()*Wc*Jc+ J_oa.transpose()*W_oa*J_oa+ Wv +W_JL_calculated)**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
         
         #without OA
-        #q_k_dot=( Je.transpose()*We*Je + Jc.transpose()*Wc*Jc + Wv + W_JL_calculated )**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
+        q_k_dot=( Je.transpose()*We*Je + Jc.transpose()*Wc*Jc + Wv + W_JL_calculated )**-1 * (Je.transpose()*We*x_k_dot+ Jc.transpose()*Wc*z_k_dot)
         #=========================================================================================================================
         
         #Integrate to find the next q_k
